@@ -6,13 +6,16 @@ var levelup = require( "level" )
 var db = levelup( "./myDb", {
 	valueEncoding: "json"
 } )
-var userDB = [];
+var userDB = {};
+var userDBarr = [];
+
 
 db.createReadStream()
 	.on( 'data', function ( data ) {
 
 		console.log( data.value )
-		userDB.push( data.value )
+		userDBarr.push( data.value )
+		userDB[data.value]
 	} )
 	.on( 'error', function ( err ) {
 		console.log( 'Oh my!', err )
