@@ -5,12 +5,12 @@
         <title>Preferences</title>
     </head>
     <body>
-        <form action = "/prefs" method = "post">
-            <input type="text" name = "genre1">
-            <input type="text" name = "genre2">
-            <input type="text" name = "artist1">
-            <input type="text" name = "artist2">
-            <input type="text" name = "artist3">
+        <form action = "/<%= name  %>/prefs" method = "post">
+            <input type="text" name = "genre1" placeholder="Enter a genre">
+            <input type="text" name = "genre2" placeholder="Enter a genre">
+            <input type="text" name = "artist1" placeholder="Enter an artist">
+            <input type="text" name = "artist2" placeholder="Enter an artist">
+            <input type="text" name = "artist3" placeholder="Enter an artist">
             <button>Add</button>
         </form>
     </body>
