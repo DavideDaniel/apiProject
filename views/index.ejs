@@ -31,9 +31,7 @@ var searchArtist = function () {
 	xhr.send();
 };
 
-var submitPreferences = function () {
 
-}
 
 var squarePics = [ "Miike Snow", "Band of Horses", "Weezer", "Nirvana",
 	"Joy Division", "deadMau5"
@@ -64,16 +62,6 @@ var generateTrack = function () {
 
 	wrapper.appendChild( spotWidget )
 }
-
-popButton.addEventListener( "click", function () {
-	var img = document.querySelector( "img" )
-
-	var artistName = input.value.replace( " ", "+" );
-	var albumName = input.value.replace( " ", "+" );
-	// searchArtist( artistName, img );
-	searchAlbums( albumName )
-
-} )
 
 var searchPopularity = function ( popQuery ) {
 	var xhr = new XMLHttpRequest();

@@ -119,10 +119,7 @@ app.post( '/:name/prefs', function ( req, res ) {
 
 	console.log( "outgoing array " + arrayOfartists );
 
-	res.render( 'result.ejs', {
-		arrayOfartists: arrayOfartists,
-		// arrayOfgenres: arrayOfgenres
-	} );
+	res.send( 'result.ejs', arrayOfartists);
 } );
 
 var addPreferences = function ( user, genre1, genre2 ) {};
