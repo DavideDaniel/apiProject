@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<title>Expose</title>
 	<link rel="stylesheet" href="../masonry.css">
+
 </head>
 <body>
 	<h1>results page</h1>
@@ -31,8 +32,9 @@ var searchArtist = function () {
 	xhr.send();
 };
 
-var squarePics = <% arrayOfartists  %>;
-var longPics = <% artistArr  %>;
+var squarePics = <%- array %>
+
+
 console.log(squarePics);
 console.log(longPics);
 

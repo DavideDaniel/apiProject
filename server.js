@@ -79,11 +79,8 @@ app.post( '/:name/prefs', function ( req, res ) {
 	var arrayOfartists = []
 
 	var name = req.params.name;
-	arrayOfgenres.push( req.body.genre1 )
-	arrayOfgenres.push( req.body.genre2 )
-	arrayOfartists.push( req.body.artist1 )
-	arrayOfartists.push( req.body.artist2 )
-	arrayOfartists.push( req.body.artist3 )
+	arrayOfgenres.push( req.body.genre1, req.body.genre2 )
+	arrayOfartists.push( req.body.artist1, req.body.artist2, req.body.artist3 )
 
 	console.log( arrayOfartists );
 	name = {
@@ -91,9 +88,11 @@ app.post( '/:name/prefs', function ( req, res ) {
 		artists: arrayOfartists
 	}
 
-	console.log( "trying literal obj"+ name.name );
-	console.log( "trying literal obj"+ name.genres );
-	console.log( "trying literal obj"+ name.artists );
+	var packedToGo = JSON.stringify( arrayOfartists );
+
+	console.log( "trying literal obj" + name.name );
+	console.log( "trying literal obj" + name.genres );
+	console.log( "trying literal obj" + name.artists );
 	userDB.forEach( function ( user ) {
 		console.log( user.name );
 		if ( user.name === name ) {
@@ -117,10 +116,14 @@ app.post( '/:name/prefs', function ( req, res ) {
 
 	// db.put( user.name, user )
 
-	console.log( "outgoing array " + arrayOfartists );
-
-	res.send( 'result.ejs', arrayOfartists);
+	console.log( "outgoing array " + packedToGo );
+	res.render( 'result.ejs', {array: packedToGo} );	
 } );
+
+app.get( 'result', function ( req, res ) {
+
+	res.render( 'result.ejs' )
+} )
 
 var addPreferences = function ( user, genre1, genre2 ) {};
 
