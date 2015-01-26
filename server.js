@@ -10,7 +10,7 @@ var userDB = [];
 
 db.createReadStream()
 	.on( 'data', function ( data ) {
-		db.del(data.value)
+
 		console.log( "in the stream full data " + data.value )
 		userDB.push( data.value )
 	} )
@@ -31,7 +31,6 @@ var User = function ( name, email ) {
 	this.genres = [];
 };
 
-
 var searchArtist = function () {
 	var xhr = new XMLHttpRequest();
 	xhr.addEventListener( 'load', function ( e ) {
@@ -51,13 +50,12 @@ app.get( '/', function ( req, res ) {
 	console.log( "inside / get " + userDB );
 
 	userDB.forEach( function ( user ) {
-		for ( key in user ) {
-			console.log( key + user.name );
-			console.log( key + user.genres );
-			console.log( key + user.artists );
-		}
-		console.log();
-	} )
+		console.log( user.name );
+		console.log( user.email );
+		console.log( user.genres );
+		console.log( user.artists );
+		console.log( "-------------" );
+	} );
 
 	res.render( 'index.ejs', {} );
 } );
@@ -77,33 +75,57 @@ app.post( '/login', function ( req, res ) {
 } );
 
 app.post( '/:name/prefs', function ( req, res ) {
+	var arrayOfgenres = []
+	var arrayOfartists = []
 
 	var name = req.params.name;
-	var genre1 = req.body.genre1;
-	var genre2 = req.body.genre2;
-	var artist1 = req.body.artist1;
-	var artist2 = req.body.artist2;
-	var artist3 = req.body.artist3;
-
-	userDB.forEach( function ( user ) {
-		console.log(user.name);
-		if ( user.name === name ) {
-			console.log( "inside prefs " + user );
-			var arrayOfgenres = user.genres.push( genre1, genre2 )
-			var arrayOfartists = user.artists.push( artist1, artist2,
-				artist3 )
-		}
-	} )
-
-	db.put( user.name, user )
+	arrayOfgenres.push( req.body.genre1 )
+	arrayOfgenres.push( req.body.genre2 )
+	arrayOfartists.push( req.body.artist1 )
+	arrayOfartists.push( req.body.artist2 )
+	arrayOfartists.push( req.body.artist3 )
 
 	console.log( arrayOfartists );
+	name = {
+		genres: arrayOfgenres,
+		artists: arrayOfartists
+	}
+
+	console.log( "trying literal obj"+ name.name );
+	console.log( "trying literal obj"+ name.genres );
+	console.log( "trying literal obj"+ name.artists );
+	userDB.forEach( function ( user ) {
+		console.log( user.name );
+		if ( user.name === name ) {
+			console.log( "inside prefs " + user.name );
+
+			db.createReadStream()
+				.on( 'data', function ( data ) {
+
+					console.log( "inside preferences, looping through db" + data.value )
+					console.log( data.value.name );
+				} )
+				.on( 'error', function ( err ) {
+					console.log( 'Oh my!', err )
+				} )
+
+			.on( 'end', function () {
+				console.log( 'Stream closed' )
+			} );
+		};
+	} );
+
+	// db.put( user.name, user )
+
+	console.log( "outgoing array " + arrayOfartists );
 
 	res.render( 'result.ejs', {
 		arrayOfartists: arrayOfartists,
 		// arrayOfgenres: arrayOfgenres
 	} );
 } );
+
+var addPreferences = function ( user, genre1, genre2 ) {};
 
 app.listen( 3000 );
 
