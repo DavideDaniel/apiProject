@@ -3,19 +3,16 @@ var ejs = require( 'ejs' );
 var bodyParser = require( 'body-parser' );
 var app = express();
 var levelup = require( "level" )
-var db = levelup( "./myDb", {
+var db = levelup( "./musicApp", {
 	valueEncoding: "json"
-} )
-var userDB = {};
-var userDBarr = [];
-
+} );
+var userDB = [];
 
 db.createReadStream()
 	.on( 'data', function ( data ) {
-
-		console.log( data.value )
-		userDBarr.push( data.value )
-		userDB[data.value]
+		db.del(data.value)
+		console.log( "in the stream full data " + data.value )
+		userDB.push( data.value )
 	} )
 	.on( 'error', function ( err ) {
 		console.log( 'Oh my!', err )
@@ -25,14 +22,15 @@ db.createReadStream()
 	console.log( 'Stream closed' )
 } );
 
+console.log( "at server start " + userDB );
+
 var User = function ( name, email ) {
 	this.name = name;
 	this.email = email;
-	this.preferences = {
-		artists: [],
-		genres: []
-	}
+	this.artists = [];
+	this.genres = [];
 };
+
 
 var searchArtist = function () {
 	var xhr = new XMLHttpRequest();
@@ -50,6 +48,17 @@ app.use( bodyParser.urlencoded( {
 app.use( express.static( __dirname + '/public' ) );
 
 app.get( '/', function ( req, res ) {
+	console.log( "inside / get " + userDB );
+
+	userDB.forEach( function ( user ) {
+		for ( key in user ) {
+			console.log( key + user.name );
+			console.log( key + user.genres );
+			console.log( key + user.artists );
+		}
+		console.log();
+	} )
+
 	res.render( 'index.ejs', {} );
 } );
 
@@ -59,8 +68,8 @@ app.post( '/login', function ( req, res ) {
 	var user = new User( name, email );
 
 	db.put( user.name, user );
-	console.log( "login " + user );
-	console.log( "login " + userDB );
+	console.log( "inside login " + user.name );
+	console.log( "inside login " + userDB );
 
 	res.render( 'prefs.ejs', {
 		name: name
@@ -75,18 +84,24 @@ app.post( '/:name/prefs', function ( req, res ) {
 	var artist1 = req.body.artist1;
 	var artist2 = req.body.artist2;
 	var artist3 = req.body.artist3;
-	userDB.name.preferences.genres.push( genre1, genre2 )
-	userDB.name.preferences.artists.push( artist1, artist2, artist3 )
-	console.log( "prefs " + userDB.name.preferences.genres );
-	console.log( "prefs " + userDB.name.preferences.artists );
 
-	var arrayOfgenres = userDB.name.preferences.genres
-	var arrayOfartists = userDB.name.preferences.artists
+	userDB.forEach( function ( user ) {
+		console.log(user.name);
+		if ( user.name === name ) {
+			console.log( "inside prefs " + user );
+			var arrayOfgenres = user.genres.push( genre1, genre2 )
+			var arrayOfartists = user.artists.push( artist1, artist2,
+				artist3 )
+		}
+	} )
+
+	db.put( user.name, user )
+
 	console.log( arrayOfartists );
-	console.log( arrayOfgenres );
+
 	res.render( 'result.ejs', {
 		arrayOfartists: arrayOfartists,
-		arrayOfgenres: arrayOfgenres
+		// arrayOfgenres: arrayOfgenres
 	} );
 } );
 

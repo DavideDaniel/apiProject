@@ -31,9 +31,7 @@ var searchArtist = function () {
 	xhr.send();
 };
 
-var squarePics = <%= arrayOfArtists  %>
-
-var longPics = <%= generated.artist  %>
+var squarePics = <%= arrayOfArtists  %>;
 
 var h1 = document.querySelector( "h1" );
 var h2 = document.querySelector( "h2" );
@@ -54,7 +52,7 @@ var generateTrack = function () {
 	spotWidget.style.frameborder = "0"
 
 	wrapper.appendChild( spotWidget )
-}
+};
 
 popButton.addEventListener( "click", function () {
 	var img = document.querySelector( "img" )
@@ -64,7 +62,7 @@ popButton.addEventListener( "click", function () {
 	// searchArtist( artistName, img );
 	searchAlbums( albumName )
 
-} )
+} );
 
 var searchPopularity = function ( popQuery ) {
 	var xhr = new XMLHttpRequest();
@@ -79,7 +77,7 @@ var searchPopularity = function ( popQuery ) {
 
 	} )
 	xhr.send();
-}
+};
 
 var genSquares = function ( array ) {
 	array.forEach( function ( artist ) {
@@ -103,7 +101,7 @@ var genSquares = function ( array ) {
 
 		} );
 		xhr.send();
-	} )
+	} );
 };
 
 var genLong = function ( array ) {
@@ -128,7 +126,7 @@ var genLong = function ( array ) {
 
 		} );
 		xhr.send();
-	} )
+	} );
 };
 
 var generatePopGraph = function ( array ) {
@@ -149,10 +147,10 @@ var generatePopGraph = function ( array ) {
 
 		} );
 		xhr.send();
-	} )
+	} );
 };
 
-// genSquares( squarePics );
+genSquares( squarePics );
 // genLong( longPics );
 
 var searchArtist = function ( artist, img ) {
@@ -195,15 +193,15 @@ var generatePics = function ( array ) {
 
 		} );
 		xhr.send();
-	} )
+	} );
 };
 
-// searchButton.addEventListener( "click", function () {
-// 	var img = document.querySelector( "img" )
-// 	var artistName = input.value.replace( " ", "+" );
-// 	searchArtist( artistName, img );
+searchButton.addEventListener( "click", function () {
+	var img = document.querySelector( "img" )
+	var artistName = input.value.replace( " ", "+" );
+	searchArtist( artistName, img );
 
-// } )
+} );
 
 </script>
 </body>
