@@ -13,6 +13,14 @@ db.createReadStream()
 
 		console.log( "in the stream full data " + data.value )
 		userDB.push( data.value )
+		var keys = Object.keys( data.value );
+		for ( var i = 0; i < keys.length; i++ ) {
+			var key = keys[ i ];
+			var value = data.value[ key ];
+			console.log( key + ":" + value );
+
+		}
+		console.log( "-----------------" );
 	} )
 	.on( 'error', function ( err ) {
 		console.log( 'Oh my!', err )
@@ -22,7 +30,7 @@ db.createReadStream()
 	console.log( 'Stream closed' )
 } );
 
-console.log( "at server start " + userDB );
+console.log( "SERVER STARTING" + userDB );
 
 var User = function ( name, email ) {
 	this.name = name;
@@ -47,15 +55,29 @@ app.use( bodyParser.urlencoded( {
 app.use( express.static( __dirname + '/public' ) );
 
 app.get( '/', function ( req, res ) {
-	console.log( "inside / get " + userDB );
+	db.createReadStream()
+		.on( 'data', function ( data ) {
 
-	userDB.forEach( function ( user ) {
-		console.log( user.name );
-		console.log( user.email );
-		console.log( user.genres );
-		console.log( user.artists );
-		console.log( "-------------" );
+			console.log( "in the stream full data " + data.value )
+			var keys = Object.keys( data.value );
+			for ( var i = 0; i < keys.length; i++ ) {
+				var key = keys[ i ];
+				var value = data.value[ key ];
+
+				console.log( key + ":" + value );
+
+			}
+			console.log( "-----------------" );
+		} )
+		.on( 'error', function ( err ) {
+			console.log( 'Oh my!', err )
+		} )
+
+	.on( 'end', function () {
+		console.log( 'Stream closed' )
 	} );
+
+	console.log( "inside / get " + userDB );
 
 	res.render( 'index.ejs', {} );
 } );
@@ -68,64 +90,52 @@ app.post( '/login', function ( req, res ) {
 	db.put( user.name, user );
 	console.log( "inside login " + user.name );
 	console.log( "inside login " + userDB );
-
+	updateLdb( userDB, db, user )
 	res.render( 'prefs.ejs', {
 		name: name
 	} );
 } );
 
 app.post( '/:name/prefs', function ( req, res ) {
-	var arrayOfgenres = []
-	var arrayOfartists = []
+	var genres = []
+	var artists = []
 
 	var name = req.params.name;
-	arrayOfgenres.push( req.body.genre1, req.body.genre2 )
-	arrayOfartists.push( req.body.artist1, req.body.artist2, req.body.artist3 )
+	genres.push( req.body.genre1, req.body.genre2 )
+	artists.push( req.body.artist1, req.body.artist2, req.body.artist3 )
 
-	console.log( arrayOfartists );
-	name = {
-		genres: arrayOfgenres,
-		artists: arrayOfartists
-	}
+	var packedToGo = JSON.stringify( artists );
 
-	var packedToGo = JSON.stringify( arrayOfartists );
+	updatePrefs( userDB, db, name )
 
-	console.log( "trying literal obj" + name.name );
-	console.log( "trying literal obj" + name.genres );
-	console.log( "trying literal obj" + name.artists );
-	userDB.forEach( function ( user ) {
-		console.log( user.name );
-		if ( user.name === name ) {
-			console.log( "inside prefs " + user.name );
-
-			db.createReadStream()
-				.on( 'data', function ( data ) {
-
-					console.log( "inside preferences, looping through db" + data.value )
-					console.log( data.value.name );
-				} )
-				.on( 'error', function ( err ) {
-					console.log( 'Oh my!', err )
-				} )
-
-			.on( 'end', function () {
-				console.log( 'Stream closed' )
-			} );
-		};
+	res.render( 'result.ejs', {
+		array: packedToGo
 	} );
-
-	// db.put( user.name, user )
-
-	console.log( "outgoing array " + packedToGo );
-	res.render( 'result.ejs', {array: packedToGo} );	
 } );
 
-app.get( 'result', function ( req, res ) {
 
-	res.render( 'result.ejs' )
-} )
+var updateLdb = function ( userDB, db, name, user ) {
+	console.log( "function started" )
+	userDB.forEach( function ( user ) {
+		console.log( "inside the forEACH" + user.name );
+		if ( user.name !== name ) {
+			console.log( name );
+			console.log( "this should be the object" +user);
 
-var addPreferences = function ( user, genre1, genre2 ) {};
+		}
+	} )
+}
+
+var updatePrefs = function ( userDB, db, name ) {
+	console.log( "function started" )
+	userDB.forEach( function ( user ) {
+		console.log( "inside the forEACH" + user.name );
+		if ( user.name !== name ) {
+			console.log( name );
+
+		}
+	} )
+}
 
 app.listen( 3000 );
 
