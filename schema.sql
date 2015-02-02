@@ -1,0 +1,23 @@
+CREATE TABLE users (
+id INTEGER PRIMARY KEY,
+name TEXT,
+email TEXT
+);
+
+CREATE TABLE songs (
+id INTEGER PRIMARY KEY,
+title TEXT,
+album_id INTEGER REFERENCES albums
+);
+
+CREATE TABLE albums (
+id INTEGER PRIMARY KEY,
+title TEXT,
+artist_id INTEGER REFERENCES artists
+);
+
+CREATE TABLE artists (
+id INTEGER PRIMARY KEY,
+name TEXT,
+user_id INTEGER REFERENCES users
+);

@@ -53,7 +53,7 @@ var arrayOfChoices = [];
 var searchSimilar = function ( picks, artist, echoKey, arr, choices) {
   var xhr = new XMLHttpRequest();
 
-  var echoUrl = "http://developer.echonest.com/api/v4/artist/similar?api_key="+echoKey+"&name="+artist+"&bucket=id:CAOCJCS12C028B69A6&limit=true&results=10"
+  var echoUrl = "http://developer.echonest.com/api/v4/artist/similar?api_key="+echoKey+"&name="+artist+"&bucket=id:CAOCJCS12C028B69A6&limit=true&results=15"
   xhr.open( "GET", echoUrl )
   xhr.addEventListener( 'load', function ( e ) {
 
