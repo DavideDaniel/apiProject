@@ -8,6 +8,8 @@ var db = levelup( "./musicApp", {
 } );
 var userDB = [];
 
+var echoKey = process.env.ECHOAPI;
+
 db.createReadStream()
 	.on( 'data', function ( data ) {
 
@@ -91,8 +93,10 @@ app.post( '/login', function ( req, res ) {
 	console.log( "inside login " + user.name );
 	console.log( "inside login " + userDB );
 	updateLdb( userDB, db, user )
+	var packedKey = JSON.stringify(echoKey)
 	res.render( 'prefs.ejs', {
-		name: name
+		name: name,
+		echoKey: packedKey
 	} );
 } );
 
@@ -105,11 +109,12 @@ app.post( '/:name/prefs', function ( req, res ) {
 	artists.push( req.body.artist1, req.body.artist2, req.body.artist3 )
 
 	var packedToGo = JSON.stringify( artists );
-
+	var packedKey = JSON.stringify(echoKey)
 	updatePrefs( userDB, db, name )
-
+	console.log(packedKey);
 	res.render( 'result.ejs', {
-		array: packedToGo
+		array: packedToGo,
+		echoKey: packedKey
 	} );
 } );
 

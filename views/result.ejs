@@ -32,10 +32,87 @@ var searchArtist = function () {
 	xhr.send();
 };
 
-var squarePics = <%- array %>
+var arrayOfArtists = <%- array %>
+var echoKey = <%- echoKey  %>
 
+function search(arrayOfObj){
+    var resultArray = []
+    for (var i=0;  i < arrayOfObj.length; i++) {
+        var j = i+1;
+		
+        if (arrayOfObj[i].name === arrayOfObj[j].name) {
+        	resultArray.push(arrayOfObj[i].name)
+            
+        }
+        j++
+    }
+}
 
-console.log(squarePics);
+var arrayOfChoices = [];
+
+var searchSimilar = function ( picks, artist, echoKey, arr, choices) {
+  var xhr = new XMLHttpRequest();
+
+  var echoUrl = "http://developer.echonest.com/api/v4/artist/similar?api_key="+echoKey+"&name="+artist+"&bucket=id:CAOCJCS12C028B69A6&limit=true&results=10"
+  xhr.open( "GET", echoUrl )
+  xhr.addEventListener( 'load', function ( e ) {
+
+    var similarArtists = JSON.parse(xhr.responseText)
+    var arrayOfSimilars = similarArtists[ "response" ][ "artists" ];
+    arrayOfSimilars.forEach(function(artist){
+    	arr.push(artist.name)
+    });
+
+    var id = similarArtists[ "response" ][ "artists" ][ 0 ][ "id" ];
+    var name = similarArtists[ "response" ][ "artists" ][ 0 ][ "name" ];
+    console.log(picks[0]+" yielded "+arrayOfNames1);
+    console.log(picks[1]+" yielded "+arrayOfNames2);
+    console.log(picks[2]+" yielded "+arrayOfNames3);
+    
+checkArrays(arrayOfNames1,arrayOfNames2,arrayOfNames3,arrayOfChoices)    
+displaySuggestion(picks, choices);
+    });
+  xhr.send();
+};
+
+    
+    
+    console.log(arrayOfChoices);
+var checkArrays = function(arr1,arr2,arr3,choiceArr){
+	for (var i = 0; i < arr1.length; i++) {
+    	for (var j = 0; j < arr2.length; j++) {
+    		for (var k = 0; k < arr2.length; k++) {
+        	if (arr1[i] === arr2[j] ) {
+          	console.log('arr2 contains: '+arr2[j]+" and arr1 contains "+arr1[i]);
+        			choiceArr.push(arr1[i])
+        		} else if (arr1[i] === arr3[k]) {
+        			console.log('arr3 contains '+arr3[k]+' and arr1 contains '+arr1[i]);
+        			choiceArr.push(arr1[i])
+        		} else if (arr2[j] === arr3[k]) {
+        			console.log('arr2 contains '+arr2[j]+' and arr3 contains '+arr3[k]);
+        		choiceArr.push(arr2[j])
+        		}
+    		}
+		}
+	}
+};
+
+var displaySuggestion = function(arr1, arr2){
+	arr1.forEach(function(pick){
+		arr2.forEach(function(name){
+			while (name !== pick)
+			console.log("You might also like"+name);
+	})
+	})
+};
+
+var arrayOfNames1 = [];
+var arrayOfNames2 = [];
+var arrayOfNames3 = [];
+
+searchSimilar (arrayOfArtists, arrayOfArtists[0], echoKey, arrayOfNames1)
+searchSimilar (arrayOfArtists, arrayOfArtists[1], echoKey, arrayOfNames2)
+searchSimilar (arrayOfArtists, arrayOfArtists[2], echoKey, arrayOfNames3)
 
 
 var h1 = document.querySelector( "h1" );
@@ -95,11 +172,12 @@ var genSquares = function ( array ) {
 			var musicAct = JSON.parse( xhr.responseText )
 			var container = document.querySelector( '#container' );
 
-			var item = document.createElement( "div" )
+			var item = document.createElement( "img" )
 			item.setAttribute( "class", "item" )
-			var imgUrl = musicAct[ "artists" ][ "items" ][ 0 ][ "images" ][ 0 ].url;
-			var cssDiv = 'background-image: url("' + imgUrl + '") ';
-			item.setAttribute( 'style', cssDiv );
+			var imgUrl = musicAct[ "artists" ][ "items" ][ 0 ][ "images" ][ 2 ].url;
+			// var cssDiv = 'background-image:url(' + imgUrl + ') no-repeat';
+			// item.setAttribute( 'style', cssDiv );
+			item.src = imgUrl;
 
 			container.appendChild( item )
 			console.log( item );
@@ -155,7 +233,7 @@ var generatePopGraph = function ( array ) {
 	} );
 };
 
-genSquares( squarePics );
+genSquares( arrayOfArtists );
 // genLong( longPics );
 
 var searchArtist = function ( artist, img ) {
